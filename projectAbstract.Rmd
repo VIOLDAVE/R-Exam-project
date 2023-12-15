@@ -1,0 +1,171 @@
+R markdown 
+```
+
+Research Question:
+
+How do socio-economic factors, specifically parental education, lunch type, and completion of test preparation courses, influence students' academic performance in traditional exams, and what nuanced connections can be identified between socio-economic background and educational outcomes?
+
+
+Project Abstract:
+
+This project aims to explore the impact of socio-economic factors on students' academic performance, focusing on the StudentsPerformance dataset. Leveraging R programming, the investigation will focus on  how variables such as parental education, lunch type, and completion of test preparation courses influence traditional exam scores.The research question delves into understanding the nuanced connections between socio-economic background and academic outcomes. Through statistical analyses and coding techniques in R, I  aim to provide insights into educational disparities. The project adheres to a structured format, including an introduction, data description, methodology, results, and conclusion. By employing visualization tool aimed to present a comprehensive analysis.
+
+
+
+Project Plan
+
+1.Data Exploration and Cleaning: loading  the dataset into R, explore its structure, and clean the dataset if necessary.
+
+2.Statistical Analysis: Perform statistical analyses to understand the relationships between socio-economic factors (parental education, lunch type, test preparation course completion) and students' performance.
+1.Computed the  descriptive statistics for key variables (parental education, lunch type, test preparation completion, exam scores).
+
+Exam scores
+count,Mean,standard deviation, Minimum,25th percentile,median, 75th percentile, and maximun.
+Visualization
+
+Categorical variables.
+sum of each categories of the categorical variables.
+Visualization
+
+3.Investigating the  correlations between variables.Using R function cor() to compute correlation coefficients and Visualize correlations using a heatmap for a clearer understanding.
+--------------------------------------------------------------------------------
+
+The output of the above R code, assuming it successfully generates a heatmap, would visually represent the correlation coefficients between math, reading, and writing scores from the StudentsPerformance dataset. Here's how to interpret the heatmap:
+
+Correlation Coefficients: The values in the heatmap range from -1 to 1. A correlation coefficient close to 1 indicates a strong positive correlation, meaning as one score increases, the other tends to increase as well. A coefficient close to -1 indicates a strong negative correlation, meaning as one score increases, the other tends to decrease. A coefficient around 0 indicates no linear correlation.
+
+Color Scheme:
+
+Red hues typically indicate a positive correlation.
+Blue hues represent negative correlations.
+White or neutral colors indicate little to no correlation.
+Tiles in the Heatmap:
+
+Each tile represents the correlation between two variables (for example, math.score and reading.score).
+The position of the tile (intersecting columns and rows) shows which variables are being compared.
+The color of the tile indicates the strength and direction of the correlation, based on the color scheme.
+Diagonal Tiles:
+
+The diagonal from the top left to the bottom right typically shows the correlation of each variable with itself, which is always 1 (perfect positive correlation).
+Symmetry:
+
+The heatmap is symmetrical along the diagonal since the correlation between A and B is the same as between B and A.
+Interpreting Specific Correlations:
+
+If math and reading scores have a red tile with a value near 1, it indicates that students who score high in math tend to also score high in reading, and vice versa.
+Similarly, if the writing and reading scores are highly positively correlated, it suggests a strong relationship between these two skills.
+The heatmap is a powerful visual tool to quickly grasp the relationships between multiple pairs of variables and can guide further statistical analysis or educational strategy formulation.
+-------------------------------------------------------------------------------
+
+
+
+4.Hypothesis Testing:
+
+Testing  the hypotheses related to the impact of parental education, lunch type, and test preparation on exam scores.Formulate hypotheses and conduct t-tests or ANOVA tests using R functions.
+Evaluate p-values and make statistical inferences.
+----------------------------------------------------------------------
+ Evaluate P-values and Make Statistical Inferences
+After running each test, check the p-value:
+
+p-value ≤ 0.05: Usually considered statistically significant. Reject the null hypothesis, suggesting that there is an impact.
+p-value > 0.05: Do not reject the null hypothesis, suggesting that there is no significant impact.
+5. Interpretation
+Interpret the results based on the p-value and the test statistics. If the p-value is low (usually ≤ 0.05), it suggests that the factor (like parental education) has a significant effect on the scores.
+--------------------------------------------------------------
+5.Regression Analysis:
+Performing  regression analysis to model the relationship between socio-economic factors and academic performance.Useing R functions like lm() to build regression models.
+Interpreting coefficients and assessing model fit.
+Visualization for Educational Disparities:
+--------------------------------------------------------------------------------
+ Interpreting Coefficients and Assessing Model Fit
+Coefficients: Show the expected change in the dependent variable for one unit of change in the independent variable, holding other variables constant.
+R-squared: Indicates the proportion of variance in the dependent variable that is predictable from the independent variables.
+p-values: Assess the significance of individual coefficients. A low p-value (typically ≤ 0.05) suggests that the variable is significantly associated with the dependent variable.
+
+ Visualization
+You can visualize the results of your regression analysis to better understand and communicate the data. Here are a few options:
+
+Coefficient Plots: Visualize the size and significance of regression coefficients.
+Residual Plots: Assess the fit of the model and check for any patterns in the residuals.
+Predicted vs. Actual Plots: Show how well the model’s predictions match the actual data
+
+To create Predicted vs. Actual Plots for the Math, Reading, and Writing Scores using the linear regression models in R, follow these steps:
+
+Build the Regression Model: Fit a linear regression model for each score using the lm() function.
+Generate Predictions: Use the predict() function to generate predictions from each model.
+Create a Data Frame for Plotting: Combine the actual and predicted values for each subject into new data frames.
+Plot Predicted vs. Actual Values: Use ggplot2 to create scatter plots of predicted versus actual values for each subject.
+------------------------------------------------------------------------------
+
+6. Comparing the impact of socio-economic factors on  exam scores.
+Using side-by-side box plots or a paired t-test to compare scores.
+
+
+7. Develop an interactive dashboard using an R package like shiny to allow users to interact with the data and insights.
+
+8.Documenting Findings: 
+Compile the results and insights into a coherent narrative using R markdown file.
+
+
+Packages to be used
+
+
+Tidyverse:
+
+ggplot2: For creating sophisticated and customizable plots.
+dplyr: For data manipulation and summarization.
+tidyr: For data tidying and reshaping.
+Statistical Analysis:
+
+stats: The base R package provides basic statistical functions.
+car: For regression diagnostics and advanced statistical methods.
+lmtest: For testing linear regression models.
+Data Handling:
+
+readr: For reading and importing data efficiently.
+data.table: For high-performance data manipulation.
+Reporting:
+
+caret: For machine learning model training and evaluation.
+randomForest: If you decide to explore machine learning methods.
+Time Series Analysis (If Applicable):
+
+zoo or xts: For handling time series data.
+forecast: For time series forecasting.
+Text Analysis (If Applicable):
+
+tm: For text mining and analysis.
+Other Tools (If Applicable):
+
+knitr: For dynamic report generation in R Markdown.
+rmarkdown: For creating dynamic documents with R.
+
+Shiny-Creating dynamic interactive dashbaord
+
+
+
+
+
+
+
+
+
+
+Visualization:
+
+
+
+Correlation Heatmap: If you wish to explore the relationships between numeric variables (like the different exam scores), a correlation heatmap can be useful.
+
+Scatter Plots with Regression Lines: These can be useful to visualize the relationship between pairs of continuous variables, such as math score vs. reading score.
+
+Faceted Plots for Score Comparisons: Use faceting to create side-by-side comparisons of histograms or box plots for scores, based on categories like lunch type or test preparation course status.
+
+
+
+Stacked Bar Graphs: These can be used to show the distribution of scores (binned into categories like low, medium, high) across different categorical variables.
+
+Density Plots: Similar to histograms, but smoothed out, they can show the distribution of scores, potentially overlaid for different groups (like gender).
+
+Interactive Dashboards: If you're using tools like Shiny in R, you can create an interactive dashboard where users can select different variables to visualize.
+

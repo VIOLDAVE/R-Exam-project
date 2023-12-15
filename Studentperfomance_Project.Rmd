@@ -1,4 +1,27 @@
-install.packages(c("ggplot2", "dplyr", "shiny","reshape2", "tidyr", "car", "lmtest", "readr", "data.table", "caret", "randomForest", "zoo", "xts", "forecast", "tm", "knitr", "rmarkdown"))
+---
+title: "The influence of  social-economic factors on  academic performance"
+author: "Viola Awor"
+date: "2023-12-17"
+output: html_document
+---
+Research Question:
+
+How do socio-economic factors, specifically parental education, lunch type, and completion of test preparation courses, influence students' academic performance in traditional exams, and what nuanced connections can be identified between socio-economic background and educational outcomes?
+
+
+Project Abstract:
+
+This project aims to explore the impact of socio-economic factors on students' academic performance, focusing on the StudentsPerformance dataset. Leveraging R programming, the investigation will focus on  how variables such as parental education, lunch type, and completion of test preparation courses influence traditional exam scores.The research question delves into understanding the nuanced connections between socio-economic background and academic outcomes. Through statistical analyses and coding techniques in R, I  aim to provide insights into educational disparities. The project adheres to a structured format, including an introduction, data description, methodology, results, and conclusion. By employing visualization tool aimed to present a comprehensive analysis.
+
+
+
+
+
+
+
+
+Data Libraries
+```{r}
 library(tidyverse)
 library(dplyr)
 library(tidyr)
@@ -6,8 +29,12 @@ library(ggplot2)
 library(rmarkdown)
 library(shiny)
 library(readr)
-# 1.Data exploration and cleaning using (tidyveres and dplyr)
-# loading The dataset and setting the variable to store the it.
+library(knitr)
+library(reshape2)
+```
+
+1. Loading  student performance Dataset to read the first few rows and  exploring the structure  and datatype and cleaning the datset by checking for missing values if any. This Dataset doesnot have missing values
+```{r}
 csv_file_path <- "StudentsPerformance.csv"
 
 # Read the CSV file into a data frame
@@ -18,7 +45,7 @@ head(Student_data)
 # Exploring the dataset structure
 str(Student_data)
 
-# View summary statistics
+# View summary statistics and structure 
 summary(Student_data)
 
 # Reading the first few rows of the dataset to get understanding of the dataset
@@ -26,8 +53,19 @@ head(Student_data)
 
 missing_values <- Student_data %>%
   summarise_all(~ sum(is.na(.)))
+```
+2.Statistical analysis to understand the relationships between socio-economic factors (parental education, lunch type, test preparation course completion) and students' performance.
+1.Computed the  descriptive statistics for exam scores; Math, readingand writing.
+Count: To know the total score for each exam.
+Mean:To determine the average score for each exam and performance.
+Standard deviation:To determine  of spread from the mean of the exam scores.
+Minimum:To know the minimum score for exam
+First quartile:To know the percentange composition of exam scores in quarters 25%
+median:To know the score value separating the higher half from the lower half of each exam score.
+Third quartile:To know the percentange composition of exam scores in quarters 75%
+Maximum:To know the maximum score for each exam
 
-
+```{r}
 #2.Compute the discreptive statistics using dplr library
 
 # Descriptive statistics for exam scores
@@ -47,7 +85,7 @@ describe_data <- function(column) {
   return(stats)
 }
 
-# Descriptive statistics for math score
+# Descriptive statistics for math score 
 math_stats <- describe_data(Student_data$math.score)
 print("Math Score Statistics:")
 print(math_stats)
@@ -65,6 +103,10 @@ print(writing_stats)
 
 
 
+```
+Computing the counts of  socio-economic categorical varibles to know the proportion of students according to each categorical variable
+
+```{r}
 # Computing counts for categorical  socio-economic variables
 
 # Parental level of education
@@ -85,16 +127,18 @@ print(lunch_type_counts)
 
 print("Test Preparation Course Completion Counts:")
 print(test_prep_course_counts)
+```
 
+Plotting a boxplot graph to show comparison in exam score performance according to gender male and female.
 
-
+```{r}
 #Boxplot showing comparison in performance between female and male students in exam scores.
 
-# Reshape the data for easy plotting
+# Reshape the data into a format  for easy plotting by ggplot2
 long_data <- Student_data %>%
   gather(key = "subject", value = "score", math.score, reading.score, writing.score)
 
-# Plotting
+# Plotting the box plot graph
 ggplot(long_data, aes(x = subject, y = score, fill = gender)) +
   geom_boxplot() +
   facet_wrap(~ subject, scales = "free") +
@@ -102,46 +146,53 @@ ggplot(long_data, aes(x = subject, y = score, fill = gender)) +
        x = "Subject",
        y = "Score") +
   theme_minimal()
+```
+Plotting a  grouped bar graph to show the comparison in average exam score performance according to gender
 
-
-
+```{r}
 #Bargraph showing average score by gender  across  subjects.
 # Reshape the data for plotting
 long_data <- Student_data %>%
   gather(key = "subject", value = "score", math.score, reading.score, writing.score)
-
 # Plotting a grouped bar graph
-ggplot(long_data, aes(x = subject, y = score, fill = gender)) +
+ggplot(long_data, aes(x = subject, y = score, fill = race.ethnicity)) +
   geom_bar(stat = "summary", fun.y = "mean", position = position_dodge()) +
-  labs(title = "Average Scores by Gender across Subjects",
+  labs(title = "Average Scores by Race across Subjects",
        x = "Subject",
        y = "Average Score") +
   theme_minimal()
 
+```
+A histogram  showing the distribution of the spread and skewness of the scores for all students.
 
-
-#A histogram for math, reading,and writing  to show the distribution of the spread and skewness of the scores for all students
+```{r}
 # Plotting histogram for Math Scores
 ggplot(Student_data, aes(x = math.score)) +
   geom_histogram(bins = 30, fill = "blue", alpha = 0.7) +
   labs(title = "Histogram of Math Scores", x = "Math Score", y = "Count") +
   theme_minimal()
+```
+Histogram showing distribution of  reading score
 
+
+```{r}
 # Plotting histogram for Reading Scores
 ggplot(Student_data, aes(x = reading.score)) +
   geom_histogram(bins = 30, fill = "red", alpha = 0.7) +
   labs(title = "Histogram of Reading Scores", x = "Reading Score", y = "Count") +
   theme_minimal()
+```
+Histogram showing distribution of writing score
 
+```{r}
 # Plotting histogram for Writing Scores
 ggplot(Student_data, aes(x = writing.score)) +
   geom_histogram(bins = 30, fill = "green", alpha = 0.7) +
   labs(title = "Histogram of Writing Scores", x = "Writing Score", y = "Count") +
   theme_minimal()
-
-
-#Pic chart representing proportion of students for each category of categorical variables.
-
+```
+Pic chart representing proportion  distribution of students for each category of categorical variables.
+```{r}
 # Pie Chart showing proportion of students by Parental Level of Education with count figures
 Student_data %>%
   count(parental.level.of.education) %>%
@@ -151,8 +202,9 @@ Student_data %>%
   geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
   labs(title = "Proportion of Students by Parental Level of Education", fill = "Parental Education") +
   theme_void()
-
-
+```
+Pie Chart showing proportion distribution of students by Lunch Types
+```{r}
 # Pie Chart showing proportion of students by Lunch Types
 Student_data %>%
   count(lunch) %>%
@@ -162,7 +214,10 @@ Student_data %>%
   geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
   labs(title = "Proportion of Students by Lunch Type", fill = "Lunch Type") +
   theme_void()
+```
+Pie Chart  showing proportion of students by Test Preparation Course Completion
 
+```{r}
 # Pie Chart  showing proportion of students by Test Preparation Course Completion
 Student_data %>%
   count(`test.preparation.course`) %>%
@@ -172,12 +227,12 @@ Student_data %>%
   geom_text(aes(label = n), position = position_stack(vjust = 0.5)) +
   labs(title = "Proportion of Students by Test Preparation Course Status", fill = "Test Preparation Course") +
   theme_void()
+```
+Using dplyr library to
+Showing the distribution of scores by  categorizing as (low, medium, high) across different categorical variables such as parental level of education, lunch type and test preparation course.
 
+```{r}
 
-
-
-#Using dplyr library to
-#To create stacked bar showing the distribution of scores  categorized as (low, medium, high) across different categorical variables such as parental level of education, lunch type and test preparation course.
 
 #First, (categorize the scores into 'Low', 'Medium', and 'High')
 #Then, plot stacked bar graphs for each subject score (Math, Reading, Writing) by parental level of education,test preparation course and lunch type
@@ -193,286 +248,335 @@ categorize_score <- function(score) {
            }
    }
 # using  sapply  function to create new columns for categorized scores
-Student_data$math_cat <- sapply(Student_data$math.score, categorize_score)
-Student_data$reading_cat <- sapply(Student_data$reading.score, categorize_score)
-Student_data$writing_cat <- sapply(Student_data$writing.score, categorize_score)
+Student_data$math_score <- sapply(Student_data$math.score, categorize_score)
+Student_data$reading_score <- sapply(Student_data$reading.score, categorize_score)
+Student_data$writing_score <- sapply(Student_data$writing.score, categorize_score)
 
+```
+Using the categorised distribution  to Plot a  stacked bar graph for Math Scores according to  Parental Level of Education
 
-   # Plottinug stacked bar graph for Math Scores by Parental Level of Education
-Student_data$math_cat <- factor(Student_data$math_cat, levels = c("Low", "Moderate","High"))
-   ggplot(Student_data, aes(x = parental.level.of.education, fill=math_cat)) +
+```{r}
+Student_data$math_score <- factor(Student_data$math_score, levels = c("Low", "Moderate","High"))
+   ggplot(Student_data, aes(x = parental.level.of.education, fill=math_score)) +
      geom_bar(position = "fill") +
      labs(title = "Distribution of Math Scores by Parental Level of Education",
          x = "Parental Level of Education", y = "Proportion") +
      theme_minimal() +
      theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-
-#  Plotting stacked bar graph for writing Scores by lunch type
-   Student_data$writing_cat <- factor(Student_data$writing_cat, levels = c("Low", "Moderate","High"))
-ggplot(Student_data, aes(x = lunch, fill=writing_cat)) +
+```
+Plotting a stacked bar graph for math scores according to lunch type
+```{r}
+  Student_data$writing_score <- factor(Student_data$writing_score, levels = c("Low", "Moderate","High"))
+ggplot(Student_data, aes(x = lunch, fill=writing_score)) +
   geom_bar(position = "fill") +
   labs(title = "Distribution of Writing scores by Lunch type",
        x = "Lunch type", y = "Proportion") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
-
-
-#Plotting stacked bar graph for reading Scores by Parental Level of Education
-Student_data$reading_cat <- factor(Student_data$reading_cat, levels = c("Low", "Moderate","High"))
-ggplot(Student_data, aes(x = test.preparation.course , fill=reading_cat)) +
+```
+Plotting stacked bar graph for reading Scores by Parental Level of Education
+```{r}
+Student_data$reading_score <- factor(Student_data$reading_score, levels = c("Low", "Moderate","High"))
+ggplot(Student_data, aes(x = test.preparation.course , fill=reading_score)) +
   geom_bar(position = "fill") +
   labs(title = "Distribution of Reading Scores by Test preparation Course",
        x = "Test preparation Course", y = "Proportion") +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust = 1))
+```
+
+Computing the  correlation coefficients between numeric variables( Exam scores)
 
 
-
-#3
-
-library(reshape2) # to reshape the correlation matrix into a format suitable for ggplot
-
-
-# Computing the  correlation coefficients between numeric variables( Exam scores)
+```{r}
 cor_matrix <- cor(Student_data[, c("math.score", "reading.score", "writing.score")], use = "complete.obs")
-
-# Melt the data for ggplot
+#library(reshape2)  to reshape the correlation matrix into a format suitable for ggplot to plot 
+# Melt the data to suit the  ggplot format
 melted_cor_matrix <- melt(cor_matrix)
 
-# heatmap to showng Correlation Coefficients
+```
+Plotting a graph to visualize the correlation coeffcience of the numeric varibels.Showing a positive correlation between the exam scores starting from 0.5
+
+
+```{r}
+# heatmap graph showing Correlation Coefficients
 ggplot(melted_cor_matrix, aes(Var1, Var2, fill = value)) +
   geom_tile() +
   scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0, limit = c(-1, 1)) +
   theme_minimal() +
   labs(title = "Heatmap of Correlation Coefficients", x = "Variable 1", y = "Variable 2") +
   coord_fixed()
+```
+Testing  the hypotheses related to the impact of parental education, lunch type, and test preparation on exam score particularly math score by Formulating hypotheses and conducting t-tests and  ANOVA tests .
+Evaluating p-values and making statistical inferences.
 
---------------------------------------------------------------------
-
-
-#4.Hypothesis Testing:
-
-#Testing  the hypotheses related to the impact of parental education, lunch type, and test preparation on exam scores.Formulate hypotheses and conduct t-tests or ANOVA tests using R functions.
-#Evaluating p-values and making statistical inferences.
-
-# ANOVA for Parental Education Impact on Math Scores because it has more than two variables
+ANOVA for Parental Education Impact on Math Scores because it has more than two variables
+```{r}
 anova_result_parental_education <- aov(math.score ~ parental.level.of.education, data = Student_data)
 summary(anova_result_parental_education)
-
-
+```
 # T-test for Lunch Type Impact on Math Scores (assuming two types of lunch)
+```{r}
 t_test_result_lunch_type <- t.test(math.score ~ lunch, data = Student_data)
 summary(t_test_result_lunch_type)
-
-
-# T-test for Test Preparation Impact on Math Scores
+```
+T-test for Test Preparation Impact on Math Scores
+```{r}
 t_test_result_test_preparation <- t.test(math.score ~ test.preparation.course, data = Student_data)
 summary(t_test_result_test_preparation)
-
------------------------------------------------------------------------
-#5.Regression model-
-
-
-
-# Linear regression model for Math Score
+```
+Performing  regression analysis to model the relationship between socio-economic factors and academic performance by building regression models and assessing model fit.
+ Linear regression model for Math Score
+```{r}
+#using lm function to create the regression model.
 math_model <- lm(math.score ~ parental.level.of.education + lunch + test.preparation.course, data = Student_data)
 summary(math_model)
 
-# linear regression model for Reading score
+```
+ Ceating linear regression model for Reading score using ml function
+```{r}
 reading_model <- lm(reading.score ~ parental.level.of.education + lunch + test.preparation.course, data = Student_data)
 summary(reading_model)
-# linear regression model for Writing score
+```
+ Creating linear regression model for Writing score using lm function
+```{r}
 writing_model <- lm(writing.score ~ parental.level.of.education + lunch + test.preparation.course, data = Student_data)
 summary(writing_model)
-
-
-# Generate predictions for each model
+```
+ Generating predictions of exam scores for each model using predict function
+```{r}
 math_predictions <- predict(math_model, newdata = Student_data)
 reading_predictions <- predict(reading_model, newdata = Student_data)
 writing_predictions <- predict(writing_model, newdata = Student_data)
-
-# Creating dataframes for plotting
+```
+Reshaping the  dataframes  to format usable by ggplot to plot the predictions above.
+```{r}
 plot_data_math <- data.frame(Actual = Student_data$math.score, Predicted = math_predictions)
 plot_data_reading <- data.frame(Actual = Student_data$reading.score, Predicted = reading_predictions)
 plot_data_writing <- data.frame(Actual = Student_data$writing.score, Predicted = writing_predictions)
 
-# Plotting Predicted vs. Actual values for Math Scores
+```
+ Plotting a graph  to show Predicted vs. Actual values for Math Scores
+```{r}
 ggplot(plot_data_math, aes(x = Actual, y = Predicted)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
   labs(title = "Predicted vs. Actual Math Scores", x = "Actual Scores", y = "Predicted Scores") +
   theme_minimal()
+```
 
-# Plotting Predicted vs. Actual values for reading Scores
+Plotting Predicted vs. Actual values for reading Scores
+```{r}
 ggplot(plot_data_reading, aes(x = Actual, y = Predicted)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
   labs(title = "Predicted vs. Actual reading Scores", x = "Actual Scores", y = "Predicted Scores") +
   theme_minimal()
-
-# Plotting Predicted vs. Actual values for writing Scores
+```
+Plotting Predicted vs. Actual values for writing Scores
+```{r}
 ggplot(plot_data_writing, aes(x = Actual, y = Predicted)) +
   geom_point() +
   geom_abline(slope = 1, intercept = 0, color = "red", linetype = "dashed") +
   labs(title = "Predicted vs. Actual wrting Scores", x = "Actual Scores", y = "Predicted Scores") +
   theme_minimal()
-
-
-
-# Coefficient plot for Math Model
+```
+Coefficient plot for Math Model
+```{r}
 coef_data <- broom::tidy(math_model)
 ggplot(coef_data, aes(estimate, term)) +
   geom_point() +
   labs(title = "Coefficients of Math Score Model")
+```
 
-
-# Coefficient plot for reading Model
-
+Coefficient plot for reading Model
+```{r}
 coef_data <- broom::tidy(reading_model)
 ggplot(coef_data, aes(estimate, term)) +
   geom_point() +
   labs(title = "Coefficients of Reading Score Model")
-
-# Coefficient plot for writing Model
-
+```
+Coefficient plot for writing Model
+```{r}
+#Using broom and tidy functions to transform thestatistical test into tidy datafram usable by ggplot
 coef_data <- broom::tidy(writing_model)
 ggplot(coef_data, aes(estimate, term)) +
   geom_point() +
   labs(title = "Coefficients of Writing Score Model")
+````
+Residual Plot for math model
 
-
-# Residual Plot for Math Model
-ggplot(math_model, aes(.fitted, .resid)) +
+```{r}
+#Initialize the object
+ggplot(math_model, aes(.fitted, .resid)) +# set mapping for the plot getting difference between the predicted values and residual value
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(title = "Residual Plot for Math Score Model", x = "Fitted Values", y = "Residuals")
-
-
-# Residual Plot for Reading Model
-ggplot(reading_model, aes(.fitted, .resid)) +
+```
+Residual Plot for Reading Model
+```{r}
+ggplot(reading_model, aes(.fitted, .resid)) + #set mapping for the plotgetting difference between the predicted values and residual value
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(title = "Residual Plot for Reading Score Model", x = "Fitted Values", y = "Residuals")
 
-# Residual Plot for Writing Model
-ggplot(writing_model, aes(.fitted, .resid)) +
+```
+Residual Plot for Writing Model
+```{r}
+ggplot(writing_model, aes(.fitted, .resid)) + # set mapping for the plot,getting difference between the predicted values and residual value
   geom_point() +
   geom_hline(yintercept = 0, linetype = "dashed") +
   labs(title = "Residual Plot for Writing Score Model", x = "Fitted Values", y = "Residuals")
+```
+Comparing the impact of socio-economic factors on  exam scores.
+Using side-by-side box plots or a paired t-test to compare scores.
 
-#6.Comparing the impact of socio-economic factors on  exam scores.
-#Using side-by-side box plots or a paired t-test to compare scores.
-
-# Parental level of education
-# Box plot comparing math scores based on parental education
+Box plot  Impact of  Parental level of education on math score
+```{r}
 ggplot(Student_data, aes(x = parental.level.of.education, y = math.score, fill = parental.level.of.education)) +
   geom_boxplot() +
   labs(title = "Math Scores by Parental Education", x = "Parental Education", y = "Math Score") +
   theme_minimal()
-
-# Box plot comparing Reading scores based on parental education
+```
+Box plot showing Impact of  Parental level of education on Reading score
+```{r}
 ggplot(Student_data, aes(x = parental.level.of.education, y = reading.score, fill = parental.level.of.education)) +
   geom_boxplot() +
   labs(title = "Reading Scores by Parental Education", x = "Parental Education", y = "reading Score") +
   theme_minimal()
-# Box plot comparing Writing scores based on parental education
+```
+Box plot showing Impact of  Parental level of education on Reading score
+
+```{r}
 ggplot(Student_data, aes(x = parental.level.of.education, y = writing.score, fill = parental.level.of.education)) +
   geom_boxplot() +
   labs(title = "Writing Scores by Parental Education", x = "Parental Education", y = "writing Score") +
   theme_minimal()
-
-# Lunch Type
-
-
-# Box plot comparing Math scores based on Lunch Type
+```
+ Box plot showing Impact of  lunch type on  math score
+```{r}
+# Box plot showing Impact of  lunch type on  math score
 ggplot(Student_data, aes(x = lunch, y = math.score, fill = lunch)) +
   geom_boxplot() +
   labs(title = "Math Scores by Lunch Type", x = "Lunch Type", y = "Math Score") +
   theme_minimal()
-
-# Box plot comparing Reading scores based on Lunch Type
+```
+Box plot showing Impact of  lunch type on  Reading score
+```{r}
+#Box plotBox plot showing Impact of  lunch type on  reading score
 ggplot(Student_data, aes(x = lunch, y = reading.score, fill = lunch)) +
   geom_boxplot() +
   labs(title = "Reading Scores by Lunch Type", x = "Lunch Type", y = "reading Score") +
   theme_minimal()
-
-# Box plot comparing Math scores based on Lunch Type
+```
+Box plot showing Impact of  lunch type on  Reading score
+```{r}
+# Box plot Box plot showing Impact of  lunch type on  writing score
 ggplot(Student_data, aes(x = lunch, y = writing.score, fill = lunch)) +
   geom_boxplot() +
   labs(title = "Writing Scores by Lunch Type", x = "Lunch Type", y = "writing Score") +
   theme_minimal()
-
-
-
-
-#Test preparation Course
-# Box plot comparing Math scores based on test preparation course
+```
+Test preparation Course
+Box plot showing the impact of test preparation course on math score
+```{r}
 ggplot(Student_data, aes(x = test.preparation.course, y = math.score, fill = test.preparation.course)) +
   geom_boxplot() +
   labs(title = "Math Scores by Test Preperation Course", x = "Test Preperation Course", y = "Math Score") +
   theme_minimal()
-
-# Box plot comparing Reading scores based on test preparation course
+```
+Box plot showing the impact of test preparation course on reading score
+```{r}
 ggplot(Student_data, aes(x = test.preparation.course, y = reading.score, fill = test.preparation.course)) +
   geom_boxplot() +
   labs(title = "Reading Scores by Test Preperation Course", x = "Test Preperation Course", y = "Reading Score") +
   theme_minimal()
+```
 
-# Box plot comparing Reading scores based on test preparation course
+Box plot showing the impact of test preparation course on writing score
+```{r}
+
 ggplot(Student_data, aes(x = test.preparation.course, y = writing.score, fill = test.preparation.course)) +
   geom_boxplot() +
   labs(title = "Writing Scores by Test Preperation Course", x = "Test Preperation Course", y = "Writing Score") +
   theme_minimal()
+```
+Dashboard to allow users easily interact with the data and insights
 
 
+```{r}
+library(shiny)
+library(ggplot2)
 
-#7.Dashboard to allow users easily interact with the data and insights.
-
+# UI Definition
 ui <- fluidPage(
   titlePanel("Student Performance Dashboard"),
-
-  # Sidebar for input controls
   sidebarLayout(
     sidebarPanel(
-      # Add input controls like dropdowns, sliders, etc.
-      selectInput("variable", "Choose a Variable:",
-                  choices = c("Math Score", "Reading Score", "Writing Score")),
-      selectInput("factor", "Choose a Socio-Economic Factor:",
-                  choices = c("Parental Education", "Lunch Type", "Test Preparation"))
+      selectInput("scoreType", "Select Score Type", 
+                  choices = c("Math", "Reading", "Writing")),
+      selectInput("socioFactor", "Select Socio-Economic Factor", 
+                  choices = c("Parental Education", "Lunch Type", "Test Preparation")),
+      actionButton("submit", "Update Results")
     ),
-
-    # Main panel for displaying outputs
     mainPanel(
-      # Output elements like plots and tables
-      plotOutput("scorePlot")
+      plotOutput("scorePlot"),
+      tableOutput("dataTable")
     )
   )
 )
 
+# Server Logic
 server <- function(input, output) {
-  output$scorePlot <- renderPlot({
-    # Loading the dataset to shiny app.
-     Student_data<-read_csv("StudentsPerformance.csv")
+  # Reactive expression to handle data based on user input
+  filteredData <- reactive({
+    # Loading the dataset
+    Student_data <- read.csv("StudentsPerformance.csv")
 
+    # Transform or filter data as needed
+    Student_data <- data %>%
+    rename(MathScore = math.score, ReadingScore = reading.score, WritingScore = writing.score)
 
-    # Creating dynamic plots based on user input
-    if(input$variable == "Math Score") {
-      score_var <- "math.score"
-    } else if(input$variable == "Reading Score") {
-      score_var <- "reading.score"
-    } else {
-      score_var <- "writing.score"
-    }
+  # 2. Creating a new variable, e.g., average score
+  Student_data <- data %>%
+    mutate(AverageScore = (MathScore + ReadingScore + WritingScore) / 3)
 
-    ggplot(data, aes_string(x = input$factor, y = score_var)) +
-      geom_boxplot() +
-      labs(title = paste(input$variable, "by", input$factor),
-           x = input$factor,
-           y = input$variable)
+  # 3. Converting categorical variables to factors
+  Student_data <- data %>%
+    mutate(ParentalEducation = as.factor(ParentalEducation),
+           LunchType = as.factor(LunchType),
+           TestPreparation = as.factor(TestPreparation))
+
+   return(Student_data) 
+  })
+
+  observeEvent(input$submit, {
+    # Generate plot based on user input
+    output$scorePlot <- renderPlot({
+      Student_data <- filteredData()
+      
+      # Determine the y-axis variable based on input
+      y_column <- switch(input$scoreType,
+                         "Math" = "math.score",
+                         "Reading" = "reading.score",
+                         "Writing" = "writing.score")
+      
+      ggplot(Student_data, aes_string(x = input$socioFactor, y = y_column)) + 
+        geom_point() +
+        labs(title = paste(input$scoreType, "Scores by", input$socioFactor),
+             x = input$socioFactor,
+             y = paste(input$scoreType, "Score"))
+    })
+
+    # Output a table of the data
+    output$dataTable <- renderTable({
+      Student_data <- filteredData()
+    })
   })
 }
 
+# Run the application 
 shinyApp(ui = ui, server = server)
-
+```
+`
+```
