@@ -4,20 +4,6 @@ author: "Viola Awor"
 date: "2023-12-17"
 output: html_document
 ---
-Research Question:
-
-How do socio-economic factors, specifically parental education, lunch type, and completion of test preparation courses, influence students' academic performance in traditional exams, and what nuanced connections can be identified between socio-economic background and educational outcomes?
-
-
-Project Abstract:
-
-This project aims to explore the impact of socio-economic factors on students' academic performance, focusing on the StudentsPerformance dataset. Leveraging R programming, the investigation will focus on  how variables such as parental education, lunch type, and completion of test preparation courses influence traditional exam scores.The research question delves into understanding the nuanced connections between socio-economic background and academic outcomes. Through statistical analyses and coding techniques in R, I  aim to provide insights into educational disparities. The project adheres to a structured format, including an introduction, data description, methodology, results, and conclusion. By employing visualization tool aimed to present a comprehensive analysis.
-
-
-
-
-
-
 
 
 Data Libraries
@@ -129,7 +115,7 @@ print("Test Preparation Course Completion Counts:")
 print(test_prep_course_counts)
 ```
 
-Plotting a boxplot graph to show comparison in exam score performance according to gender male and female.
+Plotting a boxplot graph to show comparison in exam score performance according to ethnicity
 
 ```{r}
 #Boxplot showing comparison in performance between female and male students in exam scores.
@@ -139,10 +125,10 @@ long_data <- Student_data %>%
   gather(key = "subject", value = "score", math.score, reading.score, writing.score)
 
 # Plotting the box plot graph
-ggplot(long_data, aes(x = subject, y = score, fill = gender)) +
+ggplot(long_data, aes(x = subject, y = score, fill = race.ethnicity)) +
   geom_boxplot() +
   facet_wrap(~ subject, scales = "free") +
-  labs(title = "Performance Comparison by Gender across Different Subjects",
+  labs(title = "Performance Comparison by Ethnicity across different Subjects",
        x = "Subject",
        y = "Score") +
   theme_minimal()
@@ -155,9 +141,9 @@ Plotting a  grouped bar graph to show the comparison in average exam score perfo
 long_data <- Student_data %>%
   gather(key = "subject", value = "score", math.score, reading.score, writing.score)
 # Plotting a grouped bar graph
-ggplot(long_data, aes(x = subject, y = score, fill = race.ethnicity)) +
+ggplot(long_data, aes(x = subject, y = score, fill = gender)) +
   geom_bar(stat = "summary", fun.y = "mean", position = position_dodge()) +
-  labs(title = "Average Scores by Race across Subjects",
+  labs(title = "Average Scores by Gender across Subjects",
        x = "Subject",
        y = "Average Score") +
   theme_minimal()
@@ -253,7 +239,7 @@ Student_data$reading_score <- sapply(Student_data$reading.score, categorize_scor
 Student_data$writing_score <- sapply(Student_data$writing.score, categorize_score)
 
 ```
-Using the categorised distribution  to Plot a  stacked bar graph for Math Scores according to  Parental Level of Education
+Using the categorised distribution  to Plot a  stacked bar graph for Math Scores according to  Parental Level of Education.
 
 ```{r}
 Student_data$math_score <- factor(Student_data$math_score, levels = c("Low", "Moderate","High"))
@@ -264,7 +250,7 @@ Student_data$math_score <- factor(Student_data$math_score, levels = c("Low", "Mo
      theme_minimal() +
      theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
-Plotting a stacked bar graph for math scores according to lunch type
+Plotting a stacked bar graph for Writing scores according to lunch type
 ```{r}
   Student_data$writing_score <- factor(Student_data$writing_score, levels = c("Low", "Moderate","High"))
 ggplot(Student_data, aes(x = lunch, fill=writing_score)) +
@@ -329,18 +315,18 @@ Performing  regression analysis to model the relationship between socio-economic
  Linear regression model for Math Score
 ```{r}
 #using lm function to create the regression model.
-math_model <- lm(math.score ~ parental.level.of.education + lunch + test.preparation.course, data = Student_data)
+math_model <- lm(math.score ~ parental.level.of.education + lunch + test.preparation.course+ race.ethnicity, data = Student_data)
 summary(math_model)
 
 ```
  Ceating linear regression model for Reading score using ml function
 ```{r}
-reading_model <- lm(reading.score ~ parental.level.of.education + lunch + test.preparation.course, data = Student_data)
+reading_model <- lm(reading.score ~ parental.level.of.education + lunch + test.preparation.course+ race.ethnicity, data = Student_data)
 summary(reading_model)
 ```
  Creating linear regression model for Writing score using lm function
 ```{r}
-writing_model <- lm(writing.score ~ parental.level.of.education + lunch + test.preparation.course, data = Student_data)
+writing_model <- lm(writing.score ~ parental.level.of.education + lunch + test.preparation.course+ race.ethnicity, data = Student_data)
 summary(writing_model)
 ```
  Generating predictions of exam scores for each model using predict function
@@ -348,6 +334,7 @@ summary(writing_model)
 math_predictions <- predict(math_model, newdata = Student_data)
 reading_predictions <- predict(reading_model, newdata = Student_data)
 writing_predictions <- predict(writing_model, newdata = Student_data)
+
 ```
 Reshaping the  dataframes  to format usable by ggplot to plot the predictions above.
 ```{r}
@@ -505,10 +492,8 @@ Dashboard to allow users easily interact with the data and insights
 
 
 ```{r}
-library(shiny)
-library(ggplot2)
 
-# UI Definition
+# User interface Definition
 ui <- fluidPage(
   titlePanel("Student Performance Dashboard"),
   sidebarLayout(
@@ -516,7 +501,7 @@ ui <- fluidPage(
       selectInput("scoreType", "Select Score Type", 
                   choices = c("Math", "Reading", "Writing")),
       selectInput("socioFactor", "Select Socio-Economic Factor", 
-                  choices = c("Parental Education", "Lunch Type", "Test Preparation")),
+                  choices = c("Parental Education", "Lunch Type", "Test Preparation","Ethnicity")),
       actionButton("submit", "Update Results")
     ),
     mainPanel(
@@ -539,7 +524,7 @@ server <- function(input, output) {
 
   # 2. Creating a new variable, e.g., average score
   Student_data <- data %>%
-    mutate(AverageScore = (MathScore + ReadingScore + WritingScore) / 3)
+    mutate(AverageScore = (math.score + reading.score + writing.score) / 3)
 
   # 3. Converting categorical variables to factors
   Student_data <- data %>%
